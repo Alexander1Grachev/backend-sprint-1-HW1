@@ -1,14 +1,14 @@
-import { VideoInputDto } from '../../videos/dto/video.input-dto';
-import { AvailableResolutions } from '../../videos/types/video';
-import { ValidationError } from '../../videos/types/validationError'
+import { VideoCreateDto, VideoUpdateDto } from '../../videos/dto/index';
+import { AvailableResolutions } from '../types/video';
+import { ValidationError } from '../types/validationError'
 
 
 
 //1) проверяем приходящие данные на валидность
 
 
-export const videoInputDtoValidation = (
-    data: VideoInputDto,
+export const videoUpdateDtoValidation = (
+    data: VideoUpdateDto,
 ): ValidationError[] => {
 
     const errors: ValidationError[] = [];
@@ -47,7 +47,8 @@ export const videoInputDtoValidation = (
 
 
     // Проверка minAgeRestriction
-    if (data.minAgeRestriction !== null && data.minAgeRestriction !== undefined) {
+    //if (data.minAgeRestriction !== null && data.minAgeRestriction !== undefined) {// Проверка излишняя 
+    if (!data.minAgeRestriction) {
         if (
             typeof data.minAgeRestriction !== 'number' ||
             data.minAgeRestriction < 1 ||
@@ -85,3 +86,9 @@ export const videoInputDtoValidation = (
     }
     return errors;// если не вернули никакую ошибку
 };
+
+
+// Добавить валидацию по:     
+// canBeDownloaded: boolean;
+// minAgeRestriction: number | null;
+// publicationDate: string;
