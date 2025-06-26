@@ -83,12 +83,32 @@ export const videoUpdateDtoValidation = (
                 break; // останавливаем на первом неверном 
             }
         }
+        // canBeDownloaded
+        if (typeof data.canBeDownloaded !== 'boolean') {
+            errors.push({
+                message: 'Invalid availableResolutions, must be boolean',
+                field: 'availableResolutions'
+            });
+        }
+        // minAgeRestriction
+        if (data.minAgeRestriction !== null &&
+            typeof data.minAgeRestriction !== 'number') {
+            errors.push({
+                message: 'Invalid minAgeRestriction, must be number | null',
+                field: 'minAgeRestriction'
+            });
+        }
+        // publicationDate
+        if (typeof data.publicationDate !== 'string') {
+            errors.push({
+                message: 'Invalid publicationDate, must be string',
+                field: 'publicationDate'
+            });
+        }
+
+
     }
     return errors;// если не вернули никакую ошибку
 };
 
 
-// Добавить валидацию по:     
-// canBeDownloaded: boolean;
-// minAgeRestriction: number | null;
-// publicationDate: string;

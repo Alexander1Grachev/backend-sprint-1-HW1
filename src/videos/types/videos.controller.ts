@@ -8,7 +8,7 @@ import { db } from '../../db/in-memory.db';
 import { Video } from './video';
 import { VideoCreateDto, VideoUpdateDto } from '../../videos/dto/index';
 import { videoCreateDtoValidation, videoUpdateDtoValidation } from '../../videos/validation/index';
-import { createErrorMessages } from '../../core/types/utils/error.utils';
+import { createErrorMessages, validateId } from '../../core/types/utils/error.utils';
 import { ValidationError } from '../../videos/types/validationError';
 
 import { nanoid } from 'nanoid';
@@ -16,8 +16,8 @@ import { addDays, formatISO } from 'date-fns';
 
 //готово
 export const getVideos = (
-    req: Request<{}, Video[], {}, {}>,
-    res: Response<Video[] | null>) => {
+    req: Request<{}, void, {}, {}>,
+    res: Response<Video[]>) => {
     res.status(HttpStatus.Ok).send(db.videos);
 };
 
@@ -26,17 +26,17 @@ export const createVideo = (
     req: Request, res: Response
 ) => {
 
-//1) подключили валидацию
-const errors = videoCreateDtoValidation(req.body);
-if (errors.length > 0) {
-    res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
-    return;
-}
+    //1. подключили валидацию
+    const errors = videoCreateDtoValidation(req.body);
+    if (errors.length > 0) {
+        res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
+        return;
+    }
 
     // для лаконичной даты 
     const createdAt = formatISO(new Date());
     const publicationDate = formatISO(addDays(new Date(), 1));
-    //2) создаем newVideo
+    //2. создаем newVideo
     const input: VideoCreateDto = req.body;
     const newVideo: Video = {
         id: +(new Date()), // nanoid() используем на самом деле 
@@ -49,7 +49,7 @@ if (errors.length > 0) {
         availableResolutions: input.availableResolutions || [] // защита от undefined 
     };
 
-    //3) добавляем newVideo в БД
+    //3. добавляем newVideo в БД
     db.videos.push(newVideo)
     res.status(HttpStatus.Created).send(newVideo);
 };
@@ -57,35 +57,51 @@ if (errors.length > 0) {
 //готово
 export const getVideosById = (
     req: Request<{ id: string }>,
-    res: Response<Video>
+    res: Response<Video | { errorsMessages: ValidationError[] }>
 ) => {
+
+    //1.подключили валидацию
+    const errors = validateId(req.params.id);
+    if (errors.length > 0) {
+        res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
+        return;
+    }
+
+
+    //2. ищем видео по id
     const video = db.videos.find((v) => v.id === +req.params.id);
     if (!video) {
         res.sendStatus(HttpStatus.NotFound)
         return;
     }
+
+
     res.status(HttpStatus.Ok).send(video);
 };
 
 //готово
 export const updateVideosById = (
-    req: Request<{ id: string }, unknown, VideoUpdateDto>,
+    req: Request<{ id: string }, void, VideoUpdateDto>,
     res: Response<{ errorsMessages: ValidationError[] } | void>) => {
+
+
+    //1.подключили валидацию
+    const errorsId = validateId(req.params.id);
+    const errorsBody = videoUpdateDtoValidation(req.body);
+    const errorsAll = [...errorsId, ...errorsBody] // пихаем два в один и разворачиваем их через '...'
+    if (errorsAll.length > 0) {
+        res.status(HttpStatus.BadRequest).send(createErrorMessages(errorsAll));// TS не ругается на errorsAll, тк развернули
+        return;
+    }
+    //2.ищем видео по id
     const foundVideo = db.videos.find((v) => v.id === +req.params.id);
     if (!foundVideo) {
         res.sendStatus(HttpStatus.NotFound)
         return;
     }
 
-//1) подключили валидацию
-const errors = videoUpdateDtoValidation(req.body);
-if (errors.length > 0) {
-    res.status(HttpStatus.BadRequest).send(createErrorMessages(errors)); 
-    return;
-}
 
-
-    // Обновляем поля из  VideoUpdateDto
+    //3.Обновляем поля из  VideoUpdateDto
     foundVideo.title = req.body.title;
     foundVideo.author = req.body.author;
     foundVideo.availableResolutions = req.body.availableResolutions;
@@ -102,10 +118,20 @@ if (errors.length > 0) {
 //готово
 export const deleteVideosById = (
     req: Request<{ id: string }, void>,
-    res: Response<void>
+    res: Response<{ errorsMessages: ValidationError[] } | void>
 ) => {
+    //1.подключили валидацию
+    const errors = validateId(req.params.id);
+    if (errors.length > 0) {
+        res.status(HttpStatus.BadRequest).send(createErrorMessages(errors));
+        return;
+    }
+
+
+    //2.  id из строки в число
     const videosId = +req.params.id
 
+    //3.  Перебираем массив видео в базе и делитаем по индексу 
     for (let i = 0; i < db.videos.length; i++) {
         if (db.videos[i].id === videosId) {
             db.videos.splice(i, 1)
