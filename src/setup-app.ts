@@ -19,12 +19,15 @@ export const setupApp = (app: Express) => {
 
 
     // Подключаем роуты для видео
-    app.get("/videos", getVideos);
-    app.post("/videos", createVideo);
     app.get("/videos/:id", getVideosById);
     app.put("/videos/:id", updateVideosById);
     app.delete("/videos/:id", deleteVideosById);
-    app.delete("/testing/all-data", deleteAllVideos)
+
+    app.get("/videos", getVideos);
+    app.post("/videos", createVideo);
+
+    app.delete("/testing/all-data", deleteAllVideos);
+
     return app;
 };
 

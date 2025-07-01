@@ -16,7 +16,7 @@ import { addDays, formatISO } from 'date-fns';
 
 //готово
 export const getVideos = (
-    req: Request<{}, void, {}, {}>,
+    req: Request<{}, unknown, {}, {}>,
     res: Response<Video[]>) => {
     res.status(HttpStatus.Ok).send(db.videos);
 };

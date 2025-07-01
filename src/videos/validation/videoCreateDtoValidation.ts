@@ -57,18 +57,20 @@ export const videoCreateDtoValidation = (
             message: 'availableResolutions cannot be empty',
             field: 'availableResolutions'
         });
+    }
 
-        const existingResolutions = Object.values(AvailableResolutions); // Получаем все допустимые значения из enum
-        for (const resolution of data.availableResolutions) { // Перебираем каждое значение
-            if (!existingResolutions.includes(resolution)) { // Если значение не входит в список разрешённых
-                errors.push({
-                    message: 'Invalid availableResolutions',
-                    field: 'availableResolutions'
-                });
-                break; // останавливаем на первом неверном 
-            }
+    const existingResolutions = Object.values(AvailableResolutions); // Получаем все допустимые значения из enum
+    for (const resolution of data.availableResolutions) { // Перебираем каждое значение
+        if (!existingResolutions.includes(resolution)) { // Если значение не входит в список разрешённых
+            errors.push({
+                message: 'Invalid availableResolutions',
+                field: 'availableResolutions'
+            });
+            break; // останавливаем на первом неверном 
         }
     }
+
+    
     return errors;// если не вернули никакую ошибку
 };
 
