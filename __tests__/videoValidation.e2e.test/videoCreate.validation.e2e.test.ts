@@ -2,7 +2,7 @@ import { videoCreateDtoValidation, videoUpdateDtoValidation } from '../../src/vi
 import { VideoCreateDto, VideoUpdateDto } from '../../src/videos/dto/index';
 
 import { AvailableResolutions } from '../../src/videos/types/video';
-import { HttpStatus } from '../../src/core/types/http-statuses';
+import { HttpStatus } from '../../src/core/consts/http-statuses';
 
 import request from 'supertest';
 import { setupApp } from '../../src/setup-app'; // путь к express-приложению

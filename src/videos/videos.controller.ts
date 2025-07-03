@@ -12,7 +12,6 @@ import { createErrorMessages, validateId } from '../core/utils/error.utils';
 import { ValidationError } from '../core/types/validationError';
 
 import { nanoid } from 'nanoid';
-import { addDays, formatISO } from 'date-fns';
 
 //готово
 export const getVideos = (
@@ -33,9 +32,9 @@ export const createVideo = (
         return;
     }
 
-    // для лаконичной даты 
-    const createdAt = formatISO(new Date());
-    const publicationDate = formatISO(addDays(new Date(), 1));
+
+    const createdAt = new Date().toISOString();
+    const publicationDate = new Date(Date.now() + 86400000).toISOString(); // +1 день
     //2. создаем newVideo
     const input: VideoCreateDto = req.body;
     const newVideo: Video = {
