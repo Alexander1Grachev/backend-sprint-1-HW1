@@ -3,13 +3,13 @@
 //Содержит логику для каждого эндпоинта (CRUD операции)
 
 import { Request, Response } from 'express';
-import { HttpStatus } from '../../core/types/http-statuses';
-import { db } from '../../db/in-memory.db';
-import { Video } from './video';
-import { VideoCreateDto, VideoUpdateDto } from '../../videos/dto/index';
-import { videoCreateDtoValidation, videoUpdateDtoValidation } from '../../videos/validation/index';
-import { createErrorMessages, validateId } from '../../core/types/utils/error.utils';
-import { ValidationError } from '../../videos/types/validationError';
+import { HttpStatus } from '../core/consts/http-statuses';
+import { db } from '../db/in-memory.db';
+import { Video } from './types/video';
+import { VideoCreateDto, VideoUpdateDto } from './dto/index';
+import { videoCreateDtoValidation, videoUpdateDtoValidation } from './validation/index';
+import { createErrorMessages, validateId } from '../core/utils/error.utils';
+import { ValidationError } from '../core/types/validationError';
 
 import { nanoid } from 'nanoid';
 import { addDays, formatISO } from 'date-fns';
@@ -144,9 +144,9 @@ export const deleteVideosById = (
 };
 
 //готово
-export const deleteAllVideos = (
-    req: Request, res: Response
-) => {
-    db.videos = [];
-    res.sendStatus(HttpStatus.NoContent);
-};
+// export const deleteAllVideos = (
+//     req: Request, res: Response
+// ) => {
+//     db.videos = [];
+//     res.sendStatus(HttpStatus.NoContent);
+// };

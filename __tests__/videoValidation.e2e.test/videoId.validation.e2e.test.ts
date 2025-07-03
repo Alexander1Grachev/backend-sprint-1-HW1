@@ -1,9 +1,9 @@
-import { validateId } from '../../src/core/types/utils/error.utils';
+import { validateId } from '../../src/core/utils/error.utils';
 
 import { VideoCreateDto, VideoUpdateDto } from '../../src/videos/dto/index';
 
 import { AvailableResolutions } from '../../src/videos/types/video';
-import { HttpStatus } from '../../src/core/types/http-statuses';
+import { HttpStatus } from '../../src/core/consts/http-statuses';
 
 import request from 'supertest';
 import { setupApp } from '../../src/setup-app'; // путь к express-приложению

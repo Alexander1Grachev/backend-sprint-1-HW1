@@ -123,7 +123,7 @@ describe('Video API Create body validation check', () => {
                 author: 'Valid Author',
                 availableResolutions: ['INVALID']
             })
-        expect(response.status).toBe(HttpStatus.BadRequest)//<--- ПРОВЕРИТЬ ТЕСТОМ
+        expect(response.status).toBe(HttpStatus.BadRequest)
         expect(response.body.errorsMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'availableResolutions' })])
         )

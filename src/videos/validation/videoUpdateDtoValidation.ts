@@ -1,6 +1,6 @@
 import { VideoCreateDto, VideoUpdateDto } from '../../videos/dto/index';
 import { AvailableResolutions } from '../types/video';
-import { ValidationError } from '../types/validationError'
+import { ValidationError } from '../../core/types/validationError'
 
 
 
