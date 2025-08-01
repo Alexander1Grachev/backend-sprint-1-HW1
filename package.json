@@ -6,6 +6,7 @@
   "dependencies": {
     "date-fns": "^4.1.0",
     "express": "^5.1.0",
+    "express-validator": "^7.2.1",
     "nanoid": "^5.1.5"
   },
   "devDependencies": {

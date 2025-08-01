@@ -1,28 +1,35 @@
-import prettierPlugin from 'eslint-plugin-prettier';//интеграция Prettier как ESLint-правило
-import prettierConfig from 'eslint-config-prettier';// отключает ESLint-правила, конфликтующие с Prettier
-import typescriptPlugin from '@typescript-eslint/eslint-plugin';//плагин и парсер - для TypeScript-специфичного линтинга
-import typescriptParser from '@typescript-eslint/parser';
+import prettierConfig from 'eslint-config-prettier';
 
 export default [
     {
         ignores: ['node_modules', 'dist'],
     },
     {
-        files: ['**/*.ts'],// Применяется только к .ts файлам
+        files: ['**/*.ts'],
         languageOptions: {
-            ecmaVersion: 'latest', // Современный JS
-            sourceType: 'module',// ES-модули
-            parser: typescriptParser,// Парсер TypeScript
+            ecmaVersion: 'latest',
+            sourceType: 'module',
+            parser: '@typescript-eslint/parser',
         },
         plugins: {
-            '@typescript-eslint': typescriptPlugin,// TS-правила
-            prettier: prettierPlugin, // Интеграция Prettier
+            '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
         },
         rules: {
-            'prettier/prettier': 'error',// Ошибка при несоответствии Prettier
-            '@typescript-eslint/no-unused-vars': 'warn',// Предупреждение на неиспользуемые переменны
-            eqeqeq: ['error', 'always'],// Требует === вместо ==
+            '@typescript-eslint/no-unused-vars': 'warn',
+            'eqeqeq': ['error', 'always'],
         },
     },
-    prettierConfig,// Отключает конфликтующие с Prettier ESLint-правила
+    {
+        // Отдельный блок для интеграции Prettier
+        files: ['**/*.{ts,js}'],
+        plugins: {
+            'prettier': require('eslint-plugin-prettier'),
+        },
+        rules: {
+            'prettier/prettier': ['error', {
+                endOfLine: 'auto',
+            }],
+        },
+    },
+    prettierConfig,
 ];

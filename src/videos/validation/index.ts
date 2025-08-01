@@ -1,3 +1,3 @@
 // сборщик валидаторов
-export * from './videoCreateDtoValidation';
-export * from './videoUpdateDtoValidation';
+export * from './videoCreate.input-dto.validation';
+export * from './videoUpdate.input-dto.validation';

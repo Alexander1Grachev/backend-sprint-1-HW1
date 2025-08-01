@@ -1,4 +1,4 @@
-import { VideoCreateDto, VideoUpdateDto } from '../../videos/dto/index';
+import { VideoCreateDto, VideoUpdateDto } from '../dto/index';
 import { AvailableResolutions } from '../types/video';
 import { ValidationError } from '../../core/types/validationError'
 
@@ -7,8 +7,8 @@ import { ValidationError } from '../../core/types/validationError'
 //1) проверяем приходящие данные на валидность
 
 
-export const videoCreateDtoValidation = (
-    data: VideoCreateDto,
+export const videoUpdateInputDtoValidation = (
+    data: VideoUpdateDto,
 ): ValidationError[] => {
 
     const errors: ValidationError[] = [];
@@ -45,7 +45,6 @@ export const videoCreateDtoValidation = (
         })
     }
 
-
     // Available Resolutions
     if (!Array.isArray(data.availableResolutions)) {
         errors.push({
@@ -58,7 +57,6 @@ export const videoCreateDtoValidation = (
             field: 'availableResolutions'
         });
     }
-
     const existingResolutions = Object.values(AvailableResolutions); // Получаем все допустимые значения из enum
     for (const resolution of data.availableResolutions) { // Перебираем каждое значение
         if (!existingResolutions.includes(resolution)) { // Если значение не входит в список разрешённых
@@ -69,8 +67,38 @@ export const videoCreateDtoValidation = (
             break; // останавливаем на первом неверном 
         }
     }
+    // canBeDownloaded
+    if (typeof data.canBeDownloaded !== 'boolean') {
+        errors.push({
+            message: 'Invalid availableResolutions, must be boolean',
+            field: 'canBeDownloaded'
+        });
+    }
 
-    
+    // Проверка minAgeRestriction
+    //if (!data.minAgeRestriction)  {// 0 это не null !! его мы не допускаем, как пустота(нет ограничений) он проваливается в валидацию по number
+    if ((data.minAgeRestriction !== null && data.minAgeRestriction !== undefined)) {
+        if (
+            typeof data.minAgeRestriction !== 'number' ||
+            data.minAgeRestriction < 1 ||
+            data.minAgeRestriction > 18
+        ) {
+            errors.push({
+                message: 'Age restriction must be between 1 and 18 or null',
+                field: 'minAgeRestriction'
+            });
+        }
+    }
+
+
+    // publicationDate
+    if (typeof data.publicationDate !== 'string') {
+        errors.push({
+            message: 'Invalid publicationDate, must be string',
+            field: 'publicationDate'
+        });
+    }
+
     return errors;// если не вернули никакую ошибку
 };
 

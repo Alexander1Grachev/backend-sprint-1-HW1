@@ -1,21 +1,20 @@
+import express, { Express } from 'express';
 
-import express, { Express } from "express";
-
-import { videosRouter } from "./videos/videos.router";
-import { testingRouter } from "./testing/testing.router";
+import { videosRouter } from './videos/routers/videos.router';
+import { testingRouter } from './testing/testing.router';
+import { VIDEOS_PATH, TESTING_PATH } from './core/paths/paths';
 
 export const setupApp = (app: Express) => {
-    app.use(express.json()); // middleware для парсинга JSON в теле запроса
+  app.use(express.json()); // middleware для парсинга JSON в теле запроса
 
-    // основной роут
-    app.get("/", (req, res) => {
-        res.status(200).send("Hello world!");
+  // основной роут
+    app.get('/', (req, res) => {
+    res.status(200).send('Hello world!');
     });
 
-    app.use('/videos', videosRouter)
-    // Подключаем роуты для видео
-    app.use("/testing", testingRouter);
+    app.use(VIDEOS_PATH, videosRouter);
+  // Подключаем роуты для видео
+    app.use(TESTING_PATH, testingRouter);
 
     return app;
 };
-
