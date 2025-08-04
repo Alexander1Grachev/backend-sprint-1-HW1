@@ -1,105 +1,80 @@
-import { VideoCreateDto, VideoUpdateDto } from '../dto/index';
-import { AvailableResolutions } from '../types/video';
-import { ValidationError } from '../../core/types/validationError'
+import { body } from 'express-validator';
+import { AvailableResolutions, Video } from '../types/video';
 
+const titleValidation = body('title')
+  .exists()
+  .withMessage('Title is required')
+  .bail()
+  .notEmpty()
+  .withMessage('Title must not be empty')
+  .bail()
+  .isString()
+  .withMessage('Title should be string')
+  .bail()
+  .trim()
+  .isLength({ min: 1, max: 40 })
+  .withMessage('Title must be between 1 and 40 characters');
 
+const authorValidation = body('author')
+  .exists()
+  .withMessage('Author is required')
+  .bail()
+  .notEmpty()
+  .withMessage('Author must not be empty')
+  .bail()
+  .isString()
+  .withMessage('Author should be string')
+  .bail()
+  .trim()
+  .isLength({ min: 1, max: 20 })
+  .withMessage('Author must be between 1 and 20 characters');
 
-//1) проверяем приходящие данные на валидность
+const canBeDownloadedValidation = body('canBeDownloaded')
+  .exists()
+  .withMessage('CanBeDownloaded is required')
+  .bail()
+  .isBoolean()
+  .withMessage('CanBeDownloaded should be boolean')
+  .bail();
 
-
-export const videoUpdateInputDtoValidation = (
-    data: VideoUpdateDto,
-): ValidationError[] => {
-
-    const errors: ValidationError[] = [];
-
-    // Проверка title
-    if (typeof data.title !== 'string' ||
-        data.title.trim().length === 0 ||
-        !data.title) {
-        errors.push({
-            message: "Title is required",
-            field: "title"
-        });
-    } else if (data.title.trim().length > 40) {
-        errors.push({
-            message: "Invalid title, 40 characters maximum",
-            field: "title"
-        })
+const minAgeRestrictionValidation = body('minAgeRestriction')
+  .optional({ nullable: true }) //Если поле отсутствует или равно null, то  всё норм
+  .custom((value) => {
+    //кастомная проверка
+    if (value === null) return true; //если значение null, то сразу считаем валидным и прекращаем дальше проверять
+    const number = Number(value); // на случай, если пришло строкой, но валидной
+    if (!Number.isInteger(number) || number < 1 || number > 18) {
+      // проверяем условия
+      throw new Error(
+        'minAgeRestriction must be an integer between 1 and 18 or null',
+      );
     }
+    return true;
+  });
 
+const publicationDateValidation = body('publicationDate')
+  .exists()
+  .withMessage('PublicationDate is required')
+  .bail()
+  .isString()
+  .withMessage('PublicationDate should be string')
+  .bail();
 
+const availableResolutionsValidation = body('availableResolutions')
+    .exists().withMessage('AvailableResolutions is required').bail()
+    .isArray({ min: 1 }).withMessage('At least one resolution is required').bail()
+    .custom((values: string[]) => {
+      const validResolutions = Object.values(AvailableResolutions);
+      const invalid = values.filter(v => !validResolutions.includes(v as AvailableResolutions));
+      if (invalid.length) throw new Error(`Invalid resolutions: ${invalid.join(', ')}`);
+      return true;
+    })
 
-    // Проверка author
-    if (typeof data.author !== 'string' ||
-        data.author.trim().length === 0 ||
-        !data.author) {
-        errors.push({
-            message: "Author is required",
-            field: "author"
-        });
-    } else if (data.author.trim().length > 20) {
-        errors.push({
-            message: "Invalid author, 20 characters maximum",
-            field: "author"
-        })
-    }
-
-    // Available Resolutions
-    if (!Array.isArray(data.availableResolutions)) {
-        errors.push({
-            message: 'AvailableResolutions must be an array', field: 'availableResolutions'
-        });
-    } else if (data.availableResolutions.length === 0) {
-
-        errors.push({
-            message: 'availableResolutions cannot be empty',
-            field: 'availableResolutions'
-        });
-    }
-    const existingResolutions = Object.values(AvailableResolutions); // Получаем все допустимые значения из enum
-    for (const resolution of data.availableResolutions) { // Перебираем каждое значение
-        if (!existingResolutions.includes(resolution)) { // Если значение не входит в список разрешённых
-            errors.push({
-                message: 'Invalid availableResolutions',
-                field: 'availableResolutions'
-            });
-            break; // останавливаем на первом неверном 
-        }
-    }
-    // canBeDownloaded
-    if (typeof data.canBeDownloaded !== 'boolean') {
-        errors.push({
-            message: 'Invalid availableResolutions, must be boolean',
-            field: 'canBeDownloaded'
-        });
-    }
-
-    // Проверка minAgeRestriction
-    //if (!data.minAgeRestriction)  {// 0 это не null !! его мы не допускаем, как пустота(нет ограничений) он проваливается в валидацию по number
-    if ((data.minAgeRestriction !== null && data.minAgeRestriction !== undefined)) {
-        if (
-            typeof data.minAgeRestriction !== 'number' ||
-            data.minAgeRestriction < 1 ||
-            data.minAgeRestriction > 18
-        ) {
-            errors.push({
-                message: 'Age restriction must be between 1 and 18 or null',
-                field: 'minAgeRestriction'
-            });
-        }
-    }
-
-
-    // publicationDate
-    if (typeof data.publicationDate !== 'string') {
-        errors.push({
-            message: 'Invalid publicationDate, must be string',
-            field: 'publicationDate'
-        });
-    }
-
-    return errors;// если не вернули никакую ошибку
-};
-
-
+export const videoUpdateInputDtoValidation = [
+  titleValidation,
+  authorValidation,
+  availableResolutionsValidation,
+  canBeDownloadedValidation,
+  minAgeRestrictionValidation,
+  publicationDateValidation,
+];

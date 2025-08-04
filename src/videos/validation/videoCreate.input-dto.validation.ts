@@ -1,77 +1,53 @@
-import { VideoCreateDto, VideoUpdateDto } from '../dto/index';
-import { AvailableResolutions } from '../types/video';
-import { ValidationError } from '../../core/types/validationError'
+import { body } from 'express-validator';
+import { AvailableResolutions, Video } from '../types/video';
 
+const titleValidation = body('title')
+  .exists()
+  .withMessage('Title is required')
+  .bail()
+  .notEmpty()
+  .withMessage('Title must not be empty')
+  .bail()
+  .isString()
+  .withMessage('Title should be string')
+  .bail()
+  .trim()
+  .isLength({ min: 1, max: 40 })
+  .withMessage('Title must be between 1 and 40 characters');
 
+const authorValidation = body('author')
+  .exists()
+  .withMessage('Author is required')
+  .bail()
+  .notEmpty()
+  .withMessage('Author must not be empty')
+  .bail()
+  .isString()
+  .withMessage('Author should be string')
+  .bail()
+  .trim()
+  .isLength({ min: 1, max: 20 })
+  .withMessage('Author must be between 1 and 20 characters');
 
-//1) проверяем приходящие данные на валидность
+const availableResolutionsValidation = body('availableResolutions')
+  .exists()
+  .withMessage('AvailableResolutions is required')
+  .bail()
+  .isArray({ min: 1 })
+  .withMessage('At least one resolution is required')
+  .bail()
+  .custom((values: string[]) => {
+    const validResolutions = Object.values(AvailableResolutions);
+    const invalid = values.filter(
+      (v) => !validResolutions.includes(v as AvailableResolutions),
+    );
+    if (invalid.length)
+      throw new Error(`Invalid resolutions: ${invalid.join(', ')}`);
+    return true;
+  });
 
-
-export const videoCreateDtoValidation = (
-    data: VideoCreateDto,
-): ValidationError[] => {
-
-    const errors: ValidationError[] = [];
-
-    // Проверка title
-    if (typeof data.title !== 'string' ||
-        data.title.trim().length === 0 ||
-        !data.title) {
-        errors.push({
-            message: "Title is required",
-            field: "title"
-        });
-    } else if (data.title.trim().length > 40) {
-        errors.push({
-            message: "Invalid title, 40 characters maximum",
-            field: "title"
-        })
-    }
-
-
-
-    // Проверка author
-    if (typeof data.author !== 'string' ||
-        data.author.trim().length === 0 ||
-        !data.author) {
-        errors.push({
-            message: "Author is required",
-            field: "author"
-        });
-    } else if (data.author.trim().length > 20) {
-        errors.push({
-            message: "Invalid author, 20 characters maximum",
-            field: "author"
-        })
-    }
-
-
-    // Available Resolutions
-    if (!Array.isArray(data.availableResolutions)) {
-        errors.push({
-            message: 'AvailableResolutions must be an array', field: 'availableResolutions'
-        });
-    } else if (data.availableResolutions.length === 0) {
-
-        errors.push({
-            message: 'availableResolutions cannot be empty',
-            field: 'availableResolutions'
-        });
-    }
-
-    const existingResolutions = Object.values(AvailableResolutions); // Получаем все допустимые значения из enum
-    for (const resolution of data.availableResolutions) { // Перебираем каждое значение
-        if (!existingResolutions.includes(resolution)) { // Если значение не входит в список разрешённых
-            errors.push({
-                message: 'Invalid availableResolutions',
-                field: 'availableResolutions'
-            });
-            break; // останавливаем на первом неверном 
-        }
-    }
-
-    
-    return errors;// если не вернули никакую ошибку
-};
-
-
+export const videoCreateInputDtoValidation = [
+  titleValidation,
+  authorValidation,
+  availableResolutionsValidation,
+];

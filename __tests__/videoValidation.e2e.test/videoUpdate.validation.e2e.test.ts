@@ -1,6 +1,3 @@
-import { validateId } from '../../src/core/utils/error.utils';
-import { videoCreateDtoValidation, videoUpdateDtoValidation } from '../../src/videos/validation/index';
-import { VideoCreateDto, VideoUpdateDto } from '../../src/videos/dto/index';
 
 import { AvailableResolutions } from '../../src/videos/types/video';
 import { HttpStatus } from '../../src/core/consts/http-statuses';
@@ -43,7 +40,7 @@ it('should return 400 if title is empty - PUT /videos/:id', async () => {
             publicationDate: '2024-06-01T00:00:00.000Z',
         });
     expect(response.status).toBe(HttpStatus.BadRequest);
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([expect.objectContaining({ field: 'title' })])
     )
 });
@@ -62,7 +59,7 @@ it('should return 400 if title is longer than 40 characters - PUT /videos/:id', 
             publicationDate: '2024-06-01T00:00:00.000Z',
         })
     expect(response.status).toBe(HttpStatus.BadRequest);
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([expect.objectContaining({ field: 'title' })])
     )
 });
@@ -82,7 +79,7 @@ it('should return 400 if autor is empty - PUT /videos/:id', async () => {
             publicationDate: '2024-06-01T00:00:00.000Z',
         })
     expect(response.status).toBe(HttpStatus.BadRequest)
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([expect.objectContaining({ field: 'author' })])
     )
 });
@@ -101,7 +98,7 @@ it('should return 400 if author is longer than 20 characters - PUT /videos/:id',
             publicationDate: '2024-06-01T00:00:00.000Z',
         })
     expect(response.status).toBe(HttpStatus.BadRequest)
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([expect.objectContaining({ field: 'author' })])
     )
 });
@@ -121,7 +118,7 @@ it('should return 400 if availableResolutions is not  an array - PUT /videos/:id
         })
 
     expect(response.status).toBe(HttpStatus.BadRequest);
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([expect.objectContaining({ field: 'availableResolutions' })])
     )
 });
@@ -141,7 +138,7 @@ it('should return 400 if availableResolutions is empty array - PUT /videos/:id',
         });
 
     expect(response.status).toBe(HttpStatus.BadRequest);
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([
             expect.objectContaining({ field: 'availableResolutions' })
         ])
@@ -162,7 +159,7 @@ it('should return 400 if availableResolutions contains invalid value - PUT /vide
 
         })
     expect(response.status).toBe(HttpStatus.BadRequest)//<--- ПРОВЕРИТЬ ТЕСТОМ
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([expect.objectContaining({ field: 'availableResolutions' })])
     )
 });
@@ -197,7 +194,7 @@ it('should return 400 if canBeDownloaded is a boolen - PUT /videos/:id', async (
             publicationDate: '2024-06-01T00:00:00.000Z',
         })
     expect(response.status).toBe(HttpStatus.BadRequest);
-    expect(response.body.errorsMessages).toEqual(
+    expect(response.body.errorMessages).toEqual(
         expect.arrayContaining([expect.objectContaining({ field: 'canBeDownloaded' })])
     )
 });
@@ -215,7 +212,7 @@ it('should return 400 if canBeDownloaded is a boolen - PUT /videos/:id', async (
                 publicationDate: '2024-06-01T00:00:00.000Z',
             })
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'minAgeRestriction' })])
         )
     });
@@ -234,7 +231,7 @@ it('should return 400 if canBeDownloaded is a boolen - PUT /videos/:id', async (
                 publicationDate: 20240601,
             })
         expect(respons.status).toBe(HttpStatus.BadRequest)
-        expect(respons.body.errorsMessages).toEqual(expect.arrayContaining([expect.objectContaining({ field: 'publicationDate' })]))
+        expect(respons.body.errorMessages).toEqual(expect.arrayContaining([expect.objectContaining({ field: 'publicationDate' })]))
     });
 
 });

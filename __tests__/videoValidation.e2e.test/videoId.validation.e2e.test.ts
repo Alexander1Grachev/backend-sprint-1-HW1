@@ -1,8 +1,4 @@
-import { validateId } from '../../src/core/utils/error.utils';
 
-import { VideoCreateDto, VideoUpdateDto } from '../../src/videos/dto/index';
-
-import { AvailableResolutions } from '../../src/videos/types/video';
 import { HttpStatus } from '../../src/core/consts/http-statuses';
 
 import request from 'supertest';
@@ -47,7 +43,7 @@ describe('Video API Id validation check', () => {
             .get('/videos/abc') // Строчный id 
             .send();
         expect(response.status).toBe(HttpStatus.BadRequest)
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'id' })])
         )
     });
@@ -59,7 +55,7 @@ describe('Video API Id validation check', () => {
             .send();
 
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'id' })])
         );
     })
@@ -69,7 +65,7 @@ describe('Video API Id validation check', () => {
             .get('/videos/1.5')
             .send()
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'id' })])
         );
     });
@@ -79,7 +75,7 @@ describe('Video API Id validation check', () => {
             .get('/videos/0')
             .send()
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'id' })])
         );
     });

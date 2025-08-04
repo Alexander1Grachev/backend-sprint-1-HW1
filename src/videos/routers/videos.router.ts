@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { idValidation } from '../../core/middlewares/validation/params-id.validation-middleware';
 import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validtion-result.middleware';
 import {
-  videoCreateInputDtoValidation,
   videoUpdateInputDtoValidation,
+  videoCreateInputDtoValidation,
 } from '../../videos/validation/index';
 
 import { updateVideoHandler } from './handlers/update-video.handler';
@@ -27,7 +27,17 @@ videosRouter.put(
   inputValidationResultMiddleware,
   updateVideoHandler,
 );
-videosRouter.delete('/:id', deleteVideoHandler);
+videosRouter.delete(
+  '/:id',
+  idValidation,
+  inputValidationResultMiddleware,
+  deleteVideoHandler,
+);
 
 videosRouter.get('/', getVideoListHandler);
-videosRouter.post('/', createVideoHandler);
+videosRouter.post(
+  '/',
+  videoCreateInputDtoValidation,
+  inputValidationResultMiddleware,
+  createVideoHandler,
+);

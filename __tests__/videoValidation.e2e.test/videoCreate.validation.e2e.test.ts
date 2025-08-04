@@ -1,5 +1,3 @@
-import { videoCreateDtoValidation, videoUpdateDtoValidation } from '../../src/videos/validation/index';
-import { VideoCreateDto, VideoUpdateDto } from '../../src/videos/dto/index';
 
 import { AvailableResolutions } from '../../src/videos/types/video';
 import { HttpStatus } from '../../src/core/consts/http-statuses';
@@ -30,7 +28,7 @@ describe('Video API Create body validation check', () => {
                 availableResolutions: AvailableResolutions['P144']
             });
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'title' })])
         )
     });
@@ -44,7 +42,7 @@ describe('Video API Create body validation check', () => {
                 availableResolutions: AvailableResolutions['P144']
             })
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'title' })])
         )
     })
@@ -59,7 +57,7 @@ describe('Video API Create body validation check', () => {
                 availableResolutions: [AvailableResolutions.P144]
             })
         expect(response.status).toBe(HttpStatus.BadRequest)
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'author' })])
         )
     })
@@ -73,7 +71,7 @@ describe('Video API Create body validation check', () => {
                 availableResolutions: [AvailableResolutions.P144]
             })
         expect(response.status).toBe(HttpStatus.BadRequest)
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'author' })])
         )
     })
@@ -90,7 +88,7 @@ describe('Video API Create body validation check', () => {
             })
 
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'availableResolutions' })])
         )
     })
@@ -107,7 +105,7 @@ describe('Video API Create body validation check', () => {
             });
 
         expect(response.status).toBe(HttpStatus.BadRequest);
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({ field: 'availableResolutions' })
             ])
@@ -124,7 +122,7 @@ describe('Video API Create body validation check', () => {
                 availableResolutions: ['INVALID']
             })
         expect(response.status).toBe(HttpStatus.BadRequest)
-        expect(response.body.errorsMessages).toEqual(
+        expect(response.body.errorMessages).toEqual(
             expect.arrayContaining([expect.objectContaining({ field: 'availableResolutions' })])
         )
     })

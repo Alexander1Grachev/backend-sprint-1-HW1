@@ -9,5 +9,5 @@ export function getVideoListHandler(
   res: Response<Video[]>,
 ) {
   const videos = videosReposytory.findAll();
-  res.status(HttpStatus.Ok).send(db.videos);
+  res.status(HttpStatus.Ok).send(videos);
 }
